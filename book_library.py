@@ -1,5 +1,44 @@
 import csv
 
+# Validate input information
+def book_validate():
+    # User input book title
+    title = input("Please, input book title: ").title()
+    if len(title) == 0:
+        print("Title can't be empty!")
+        return
+    # User input book author
+    author = input("Please, input book author: ").title()
+    if len(author) == 0:
+        print("Author can't be empty!")
+        return
+    # Try user input integer for years
+    try:
+        year = int(input("Please, input book publish year: "))
+    except ValueError:
+        print("Input year is not correct!")
+        return
+    # If every input is valid, return information
+    return title, author, year
+
+# Validate user answers
+def answer_validate(answer):
+    # Dict for operations
+    answers_dict = {
+        "y" : "yes",
+        "yes" : "yes",
+        "a" : library.append,
+        "append" : library.append,
+        "s" : library.search,
+        "search" : library.search,
+        "i" : library.append,
+        "info" : library.append,
+    }
+    
+    # Check if answer parameter is in dictionary and return it
+    if answer in answers_dict:
+        return answers_dict[answer]
+
 # Create book class
 class Book:
     # Initialize parameters
@@ -20,6 +59,29 @@ class BookManager:
     # This method returns if library is empty or not
     def empty(self):
         return len(self.book_list) == 0
+    
+    # This method adds book in the library
+    def append(self):
+        # Used while loop if user wants to add more and more books
+        while True:
+            # Try to unpack variables from book validation function
+            try:
+                title, author, year = book_validate()
+            except:
+                answer = input("Try again? y/n ").lower()
+                # If inputted info is not valid, ask user wants or not add book again
+                if not answer_validate(answer) == "yes":
+                    break
+            else:
+                # If get valid info, add book object in the library and csv file by calling itself 
+                new_book = Book(title, author, year)
+                self.book_list.append(new_book)
+                self.create_books_file()
+                print("Book added")
+                answer = input("Do you want to add more book? y/n ")
+                # Prompt user, wants or not add book again
+                if not answer_validate(answer) == "yes":
+                    break
         
     # This method prints all books information in library
     def display_books(self):
@@ -39,3 +101,5 @@ class BookManager:
             writer = csv.writer(books)
             writer.writerow(["Title", "Author", "Year"])
             writer.writerows(csv_list)
+            
+library = BookManager()
