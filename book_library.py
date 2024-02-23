@@ -39,6 +39,13 @@ def answer_validate(answer):
     if answer in answers_dict:
         return answers_dict[answer]
 
+# This is search function
+def search_title(title, lst):
+    for obj in lst:
+        if obj.title == title:
+            return obj
+    return False
+
 # Create book class
 class Book:
     # Initialize parameters
@@ -82,6 +89,23 @@ class BookManager:
                 # Prompt user, wants or not add book again
                 if not answer_validate(answer) == "yes":
                     break
+                
+    # This method will search book in the library based title given by user
+    def search(self):
+        book_title = input("\nPlease, input book title for search: ").title()
+        book = search_title(book_title, self.book_list)
+        if book:
+            print(f"The book you search, there is in the library -> {book}")
+            # If there is book in the library, prompt user wants search again or not
+            answer = input("Do you want to search again? ")
+            if answer_validate(answer) == "yes":
+                self.search()
+        else:
+            print("There is not a book in the library")
+            # If there is not book in the library, prompt user wants add book or not
+            answer = input("Do you want add it to library? ")
+            if answer_validate(answer) == "yes":
+                self.append()
         
     # This method prints all books information in library
     def display_books(self):
