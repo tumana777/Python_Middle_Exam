@@ -69,6 +69,7 @@ class BookManager:
     
     # This method adds book in the library
     def append(self):
+        print("\nAdding book...")
         # Used while loop if user wants to add more and more books
         while True:
             # Try to unpack variables from book validation function
@@ -84,7 +85,7 @@ class BookManager:
                 new_book = Book(title, author, year)
                 self.book_list.append(new_book)
                 self.create_books_file()
-                print("Book added")
+                print("\nBook added\n")
                 answer = input("Do you want to add more book? y/n ")
                 # Prompt user, wants or not add book again
                 if not answer_validate(answer) == "yes":
@@ -92,23 +93,28 @@ class BookManager:
                 
     # This method will search book in the library based title given by user
     def search(self):
-        book_title = input("\nPlease, input book title for search: ").title()
-        book = search_title(book_title, self.book_list)
-        if book:
-            print(f"The book you search, there is in the library -> {book}")
-            # If there is book in the library, prompt user wants search again or not
-            answer = input("Do you want to search again? ")
-            if answer_validate(answer) == "yes":
-                self.search()
+        # Checking if library is empty or not
+        if self.empty():
+            print("Library is empty")
         else:
-            print("There is not a book in the library")
-            # If there is not book in the library, prompt user wants add book or not
-            answer = input("Do you want add it to library? ")
-            if answer_validate(answer) == "yes":
-                self.append()
+            book_title = input("\nPlease, input book title for search: ").title()
+            book = search_title(book_title, self.book_list)
+            if book:
+                print(f"The book you search, there is in the library -> {book}")
+                # If there is book in the library, prompt user wants search again or not
+                answer = input("Do you want to search again? ")
+                if answer_validate(answer) == "yes":
+                    self.search()
+            else:
+                print("There is not a book in the library")
+                # If there is not book in the library, prompt user wants add book or not
+                answer = input("Do you want add it to library? ")
+                if answer_validate(answer) == "yes":
+                    self.append()
         
     # This method prints all books information in library
     def display_books(self):
+        # Checking if library is empty or not
         if self.empty():
             print("Library is empty")
         else:
@@ -121,9 +127,22 @@ class BookManager:
     # This method creates CSV file for library
     def create_books_file(self):
         csv_list = [[book.title, book.author, book.year] for book in self.book_list]
-        with open("Library.csv", "w", newline="") as books:
+        with open("Library.csv", "a", newline="") as books:
             writer = csv.writer(books)
             writer.writerow(["Title", "Author", "Year"])
             writer.writerows(csv_list)
             
+# Create bookmanager object
 library = BookManager()
+
+# Manually add books
+library.append()
+
+# Ask user what operation wants
+answer = input("What do you want to do with library? ").strip().lower()
+
+# Call library methods based user inputted command
+try:
+    answer_validate(answer)()
+except TypeError:
+    print("Please, inpute valid command!")
