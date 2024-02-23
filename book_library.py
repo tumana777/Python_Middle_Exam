@@ -81,10 +81,9 @@ class BookManager:
                 if not answer_validate(answer) == "yes":
                     break
             else:
-                # If get valid info, add book object in the library and csv file by calling itself 
+                # If get valid info, add book object in the library
                 new_book = Book(title, author, year)
                 self.book_list.append(new_book)
-                self.create_books_file()
                 print("\nBook added\n")
                 answer = input("Do you want to add more book? y/n ")
                 # Prompt user, wants or not add book again
@@ -126,10 +125,13 @@ class BookManager:
     
     # This method creates CSV file for library
     def create_books_file(self):
-        csv_list = [[book.title, book.author, book.year] for book in self.book_list]
-        with open("Library.csv", "a", newline="") as books:
-            writer = csv.writer(books)
-            writer.writerow(["Title", "Author", "Year"])
+        csv_list = [{"title" : book.title, "author" : book.author, "year" : book.year} for book in self.book_list]
+        headers = ["title", "author", "year"]
+        with open("Library.csv", "a+", newline="") as books:
+            books.seek(0)
+            writer = csv.DictWriter(books, fieldnames=headers)
+            if len(books.readlines()) == 0:
+                writer.writeheader()
             writer.writerows(csv_list)
             
 # Create bookmanager object
@@ -146,3 +148,6 @@ try:
     answer_validate(answer)()
 except TypeError:
     print("Please, inpute valid command!")
+
+# Finally add books to csv file
+library.create_books_file()
