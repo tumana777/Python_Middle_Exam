@@ -31,8 +31,8 @@ def answer_validate(answer):
         "append" : library.append,
         "s" : library.search,
         "search" : library.search,
-        "i" : library.append,
-        "info" : library.append,
+        "i" : library.display_books,
+        "info" : library.display_books,
     }
     
     # Check if answer parameter is in dictionary and return it
@@ -85,7 +85,7 @@ class BookManager:
                 new_book = Book(title, author, year)
                 self.book_list.append(new_book)
                 print("\nBook added\n")
-                answer = input("Do you want to add more book? y/n ")
+                answer = input("Do you want to add more books? y/n ")
                 # Prompt user, wants or not add book again
                 if not answer_validate(answer) == "yes":
                     break
@@ -101,13 +101,13 @@ class BookManager:
             if book:
                 print(f"The book you search, there is in the library -> {book}")
                 # If there is book in the library, prompt user wants search again or not
-                answer = input("Do you want to search again? ")
+                answer = input("Do you want to search again? y/n ")
                 if answer_validate(answer) == "yes":
                     self.search()
             else:
                 print("There is not a book in the library")
                 # If there is not book in the library, prompt user wants add book or not
-                answer = input("Do you want add it to library? ")
+                answer = input("Do you want add it to library? y/n ")
                 if answer_validate(answer) == "yes":
                     self.append()
         
@@ -137,17 +137,16 @@ class BookManager:
 # Create bookmanager object
 library = BookManager()
 
-# Manually add books
-library.append()
-
-# Ask user what operation wants
-answer = input("What do you want to do with library? ").strip().lower()
-
 # Call library methods based user inputted command
-try:
-    answer_validate(answer)()
-except TypeError:
-    print("Please, inpute valid command!")
+while True:
+    try:
+        # Ask user what operation wants
+        answer = input("\nWhat do you want to do with library? \na - append, s - search, i - books info, stop - for stop. \n-> ").strip().lower()
+        if answer == "stop":
+            break
+        answer_validate(answer)()
+    except TypeError:
+        print("Please, input valid command!")
 
 # Finally add books to csv file
 library.create_books_file()
