@@ -124,7 +124,7 @@ class StudentManager:
     
     # This method adds student object in students list
     def append(self):
-        print("Adding Student...")
+        print("\nAdding Student...")
         # Try to get student inforamtion from outer function
         try:
             name, roll_number, grade = validate_student(self.student_list)
@@ -139,6 +139,7 @@ class StudentManager:
             
     # Student search method
     def search(self):
+        print("\nSearching student with roll number...")
         # Checking if student list is empty or not
         if self.empty():
             print("Student list is empty!")
@@ -157,7 +158,28 @@ class StudentManager:
                     return
             print("Searching ended.")
 
-
+    def update_grade(self):
+        # Checking if student list is empty or not
+        if self.empty():
+            print("Student list is empty!")
+        else:
+            # Ask user to input student's roll number to update this student's grade
+            print("\nSearching student with roll number...")
+            roll_number = input("Please, input student roll number to update grade: ")
+            # Checking input value is valid or not
+            if check_number(roll_number):
+                # If input value is valid, then begins searching
+                student = linear_search(self.student_list, roll_number)
+                # If there is a student with this roll number, ask user to input new grade
+                if student:
+                    print("\nUpdating student's grade...")
+                    new_grade = input("Please, input new grade to update student's existing grade: ").upper()
+                    # Cheking input grade valid
+                    if validate_grade(new_grade):
+                        # Update student's grade
+                        student.grade = new_grade
+                else:
+                    print("There is no student in the university with this roll number.")
         
     def display_students(self):
         for student in self.student_list:
