@@ -104,6 +104,12 @@ def linear_search(lst, n):
             return lst[i]
     return False
 
+# Serializing class to write in json file
+def serialize_student(obj):
+    if isinstance(obj, Student):
+        return {"ID" : obj.id, "Name" : obj.name, "Roll Number" : obj.roll_number, "Grade" : obj.grade}
+    raise TypeError("Not a Product class!")
+
 # Create Student Class
 class Student:
     # Initialize parameters
@@ -141,6 +147,8 @@ class StudentManager:
             new_student.id = len(self.student_list) + 1
             self.student_list.append(new_student)
             print("\nStudent added.")
+            # Writing students data to json file
+            self.write_json()
             
     # Student search method
     def search(self):
@@ -194,8 +202,16 @@ class StudentManager:
             print("\nStudent list is empty!")
         else:
             print(f"\nThere are {len(self.student_list)} students in the university: ")
-            for student in self.student_list:
-                print(student)
+            # Get students list dictionary
+            students = [{"ID" : student.id, "Name" : student.name, "Roll Number" : student.roll_number, "Grade" : student.grade} for student in self.student_list]
+            headers = {"ID" : "ID", "Name" : "Name", "Roll Number" : "Roll Number", "Grade" : "Grade"}
+            # Print students using tabulate module
+            print(tabulate(students, headers, tablefmt="grid"))
+    
+    # This method writes student data to json file
+    def write_json(self):
+        with open("students.json", "w") as json_file:
+            json.dump(self.student_list, json_file, default=serialize_student, indent=4)
         
 # Create univercity example by StudentManager class
 university = StudentManager()
