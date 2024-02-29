@@ -1,3 +1,7 @@
+# Import modules
+import json
+from tabulate import tabulate
+
 # Validate firstname and lastname
 def validate_name(name):
     # This try except block tries to get first name and last name
@@ -65,7 +69,7 @@ def validate_student(student_list):
         break
     # This while loop gives user 3 tries to input valid roll number
     while True:
-        number = input("Please, input student roll number: ")
+        number = input("Please, input student roll number: ").strip()
         # Calling this function checks roll number validation
         if not validate_number(student_list, number):
             # If roll number not valid, counter increases and prompts user again to input valid number
@@ -78,7 +82,7 @@ def validate_student(student_list):
         break
     # This while loop gives user 3 tries to input valid grade
     while True:
-        grade = input("Please, input student grade: ").upper()
+        grade = input("Please, input student grade: ").upper().strip()
         # Calling this function checks grade validation
         if not validate_grade(grade):
             # If grade not valid, counter increases and prompts user again to input valid grade
@@ -136,14 +140,15 @@ class StudentManager:
             new_student = Student(name, roll_number, grade)
             new_student.id = len(self.student_list) + 1
             self.student_list.append(new_student)
+            print("\nStudent added.")
             
     # Student search method
     def search(self):
-        print("\nSearching student with roll number...")
         # Checking if student list is empty or not
         if self.empty():
-            print("Student list is empty!")
+            print("\nStudent list is empty!")
         else:
+            print("\nSearching student with roll number...")
             # Give user 3 tries to input valid number
             for _ in range(3):
                 roll_number = input("Please, input roll number for search: ")
@@ -161,7 +166,7 @@ class StudentManager:
     def update_grade(self):
         # Checking if student list is empty or not
         if self.empty():
-            print("Student list is empty!")
+            print("\nStudent list is empty!")
         else:
             # Ask user to input student's roll number to update this student's grade
             print("\nSearching student with roll number...")
@@ -172,18 +177,60 @@ class StudentManager:
                 student = linear_search(self.student_list, roll_number)
                 # If there is a student with this roll number, ask user to input new grade
                 if student:
+                    print(f"Student found: -> {student}")
                     print("\nUpdating student's grade...")
                     new_grade = input("Please, input new grade to update student's existing grade: ").upper()
                     # Cheking input grade valid
                     if validate_grade(new_grade):
                         # Update student's grade
                         student.grade = new_grade
+                        print(f"Student's grade updated: -> {student}")
                 else:
                     print("There is no student in the university with this roll number.")
         
     def display_students(self):
-        for student in self.student_list:
-            print(student)
+        # Checking if student list is empty or not
+        if self.empty():
+            print("\nStudent list is empty!")
+        else:
+            print(f"\nThere are {len(self.student_list)} students in the university: ")
+            for student in self.student_list:
+                print(student)
         
 # Create univercity example by StudentManager class
 university = StudentManager()
+
+# This is shortcuts for user actions
+commands_dict = {
+    "a" : "append",
+    "s" : "search",
+    "u" : "update_grade",
+    "i" : "display_students",
+    "e" : "exit program"
+}
+
+# This function returns string format of univeristy methods based given command
+def user_action(cmd, dict):
+    for action in dict:
+        if action == cmd:
+            return f"university.{dict[action]}()"
+        
+# Begin app working
+while True:
+    try:
+        # Print the commands menu
+        print("\nHere is commands menu:")
+        for c,d in commands_dict.items():
+            print(f"{c} -> {d.title()}")
+        # print(tabulate(commands_data, headers=["Command", "Description"], tablefmt="grid"))
+        # Ask user input command for action
+        command = input("\nPlease, input command, you wish to do with university: ").lower().strip()
+        # Break while loop if commandis "e"
+        if command == "e":
+            print("Goodbye.")
+            break
+        # This function converts string to call function
+        eval(user_action(command, commands_dict))
+    except:
+        # If command is not commands dictionary, print error
+        print("Please, input valid command!")
