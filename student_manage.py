@@ -14,13 +14,19 @@ def validate_name(name):
     # If everything is validated, function returns true
     return True
 
-# Validate unique number
-def validate_number(student_list, number):
-    # Checking if number is integer
+# Checking if number is integer
+def check_number(number):
     if not number.isdigit():
         # If number is not integer return false
             print("Please, input valid number!")
             return False
+    return True
+
+# Validate unique number
+def validate_number(student_list, number):
+    # Checking if number is integer
+    if not check_number(number):
+        return False
     # Checking if student number is already in list or not
     for student in student_list:
                 if student.roll_number == number:
@@ -45,23 +51,27 @@ def validate_grade(grade):
 def validate_student(student_list):
     counter = 0
     # This while loop gives user 3 tries to input valid name
-    while counter < 3:
+    while True:
         name = input("Please, input student name: ").strip().title()
         # Calling this function checks name validation
         if not validate_name(name):
             # If name not valid, counter increases and prompts user again to input valid name
             counter += 1
+            if counter == 3:
+                return
             continue
         # If name is valid, counter will reset, breaks this while loop and begins next while loop
         counter = 0
         break
     # This while loop gives user 3 tries to input valid roll number
-    while counter < 3:
+    while True:
         number = input("Please, input student roll number: ")
         # Calling this function checks roll number validation
         if not validate_number(student_list, number):
             # If roll number not valid, counter increases and prompts user again to input valid number
             counter += 1
+            if counter == 3:
+                return
             continue
         # If roll number is valid, counter will reset, breaks this while loop and begins next while loop
         counter = 0
@@ -82,6 +92,14 @@ def validate_student(student_list):
         
     return name, number, grade
 
+# This is linear search function
+def linear_search(lst, n):
+    
+    for i in range(len(lst)):
+        if lst[i].roll_number == n:
+            return lst[i]
+    return False
+
 # Create Student Class
 class Student:
     # Initialize parameters
@@ -100,16 +118,45 @@ class StudentManager:
     # At the beginning, student list is empty
     student_list = []
     
+    # This method returns if library is empty or not
+    def empty(self):
+        return len(self.student_list) == 0
+    
     # This method adds student object in students list
     def append(self):
+        print("Adding Student...")
+        # Try to get student inforamtion from outer function
         try:
             name, roll_number, grade = validate_student(self.student_list)
         except:
-            print("Exit...")
+            # If student inforamtion can not get, print 
+            print("Student can't be added.")
         else:
+            # If input student inforamtion is valid, add student to university
             new_student = Student(name, roll_number, grade)
             new_student.id = len(self.student_list) + 1
             self.student_list.append(new_student)
+            
+    # Student search method
+    def search(self):
+        # Checking if student list is empty or not
+        if self.empty():
+            print("Student list is empty!")
+        else:
+            # Give user 3 tries to input valid number
+            for _ in range(3):
+                roll_number = input("Please, input roll number for search: ")
+                # Checking input value
+                if check_number(roll_number):
+                    # If input value is valid, then begins searching and for cycle will stop
+                    student = linear_search(self.student_list, roll_number)
+                    if student:
+                        print(f"Student you search, there is full info -> {student}")
+                    else:
+                        print("There is no student in the university with this roll number.")
+                    return
+            print("Searching ended.")
+
 
         
     def display_students(self):
